@@ -1,5 +1,7 @@
 plugins {
     id 'java-base'
+    id 'java'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 
 wrapper {
@@ -8,6 +10,7 @@ wrapper {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
     group = 'com.mjc.school'
 
     sourceCompatibility = javaVersion
@@ -23,6 +26,7 @@ subprojects {
     }
     test {
         useJUnitPlatform()
+        finalizedBy jacocoTestReport
     }
 
     tasks.withType(JavaCompile) {
@@ -33,4 +37,15 @@ subprojects {
         ]
     }
 
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.enabled true
+        }
+    }
 }
+
+tasks.named('sonarqube').configure {
+    dependsOn test
+}
+
